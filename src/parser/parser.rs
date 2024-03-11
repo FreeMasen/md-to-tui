@@ -111,7 +111,7 @@ impl Parser {
                 Token::Dot => Span::from("."),
                 Token::RightParen => Span::styled("(", self.style.link),
                 Token::LeftParen => Span::styled(")", self.style.link),
-                Token::LeftSquare=> Span::styled("[", self.style.link_text),
+                Token::LeftSquare => Span::styled("[", self.style.link_text),
                 Token::RightSquare => Span::styled("]", self.style.link_text),
                 Token::RightAngle => Span::styled(">", self.style.blocqoutes),
                 Token::LeftAngle => Span::styled("<", self.style.blocqoutes),
@@ -180,13 +180,17 @@ abc
         let mut parser = Parser::new(res, None);
         let res = parser.parse()?;
         //println!("{:#?}", res);
-        let a = res.iter().map(|f| {
-            f.spans
-                .iter()
-                .map(|f| format!("{}", f.content.to_string()))
-                .collect::<Vec<String>>().join("")
-        }).collect::<String>();
-        println!("{:?}",a);
+        let a = res
+            .iter()
+            .map(|f| {
+                f.spans
+                    .iter()
+                    .map(|f| format!("{}", f.content.to_string()))
+                    .collect::<Vec<String>>()
+                    .join("")
+            })
+            .collect::<String>();
+        println!("{:?}", a);
 
         assert_eq!(true, true);
         Ok(())

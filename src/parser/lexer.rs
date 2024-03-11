@@ -1,7 +1,4 @@
-use std::{
-    fmt::Display,
-    u8,
-};
+use std::{fmt::Display, u8};
 
 use crate::error::Error;
 
@@ -74,7 +71,7 @@ impl Display for Token {
             Token::BackSlash => "BackSlash".into(),
             Token::Colon => "Colon".into(),
             Token::SemiColon => "SemiColon".into(),
-            Token::Slash => "Slash".into()
+            Token::Slash => "Slash".into(),
         };
         write!(f, "{}", format!("{}{}", text, tok))
     }
@@ -110,7 +107,7 @@ impl Lexer {
     }
 
     pub fn parse<T: ToString>(&mut self, input: &T) -> Result<Vec<Token>, Error> {
-        // BUG: format!("\n{}") is needed becuze it skips first line 
+        // BUG: format!("\n{}") is needed becuze it skips first line
         self.input = format!("\n{}", input.to_string()).into();
         // self.input = input.to_string().into();
 
@@ -232,11 +229,10 @@ mod test {
 
         let mut lexer = Lexer::new();
 
-
         let res = lexer.parse::<&str>(&input)?;
 
         let mut diff: Vec<(Token, Token)> = vec![];
-        for (i,t) in tokens.iter().enumerate()  {
+        for (i, t) in tokens.iter().enumerate() {
             if *t != res[i] {
                 diff.push((t.clone(), res[i].clone()))
             }
