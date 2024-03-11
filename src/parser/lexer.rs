@@ -13,9 +13,10 @@ pub enum Token {
     WhiteSpace,
     Tab,
 
-    EOL,
+    SoftBreak,
+    HardBreak,
     #[default]
-    EOF,
+    Eof,
 
     LeftSquare,
     RightSquare,
@@ -49,8 +50,9 @@ impl Display for Token {
 
             Token::WhiteSpace => "WhiteSpace",
             Token::Tab => "Tab",
-            Token::EOL => "EOL",
-            Token::EOF => "EOF",
+            Token::SoftBreak => "SoftBreak",
+            Token::HardBreak => "HardBreak",
+            Token::Eof => "Eof",
 
             Token::LeftSquare => "LeftSquare",
             Token::RightSquare => "RightSquare",
@@ -77,7 +79,7 @@ impl Display for Token {
 
 impl Token {
     pub fn is_end(&self) -> bool {
-        if (*self == Token::EOF) | (*self == Token::EOL) {
+        if (*self == Token::Eof) | (*self == Token::HardBreak) {
             return true;
         }
         false
@@ -131,8 +133,14 @@ impl Lexer {
             b'=' => Token::Equal,
             b'#' => return Ok(self.read_heading()),
             ch if INDENT_CHARS.contains(&ch) => return Ok(self.read_indent()),
-            b'\0' => Token::EOF,
-            b'\n' => Token::EOL,
+            b'\0' => Token::Eof,
+            b'\n' => {
+                if self.peek() == b'\n' {
+                    Token::HardBreak
+                } else {
+                    Token::SoftBreak
+                }
+            }
 
             b'.' => Token::Dot,
             b'_' => Token::Undersocre,
@@ -203,7 +211,7 @@ mod test {
 ";
 
         let tokens = vec![
-            Token::EOL,
+            Token::SoftBreak,
             Token::Heading(1),
             Token::WhiteSpace,
             Token::Indent("Test".into()),
@@ -221,9 +229,9 @@ mod test {
             Token::Indent("test".into()),
             Token::WhiteSpace,
             Token::Indent("lol".into()),
-            Token::EOL,
+            Token::SoftBreak,
             Token::Indent("2".into()),
-            Token::EOL,
+            Token::SoftBreak,
         ];
 
         let mut lexer = Lexer::new();

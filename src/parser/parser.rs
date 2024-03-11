@@ -80,7 +80,7 @@ impl Parser {
 
     fn next_line<'a>(&mut self) -> Result<Line<'a>, Error> {
         let mut spans: Vec<Span> = Vec::new();
-        while !self.token.is_end() {
+        while !self.token.is_end() && self.position >= self.input.len() {
             // info!("Is end {}", self.token.is_end());
 
             spans.push(match &self.token {
@@ -119,7 +119,9 @@ impl Parser {
                 Token::Colon => Span::styled(":", self.style.text),
                 Token::SemiColon => Span::styled(";", self.style.text),
                 Token::Slash => Span::styled("/", self.style.text),
-
+                Token::SoftBreak => {
+                    continue;
+                }
                 _ => Span::from(format!("TODO: {}", self.token.to_string())),
             });
 
@@ -135,7 +137,7 @@ impl Parser {
 
     fn read_token(&mut self) {
         if self.read_position >= self.input.len() {
-            self.token = Token::EOF;
+            self.token = Token::Eof;
         } else {
             self.token = self.input[self.read_position].clone()
         }
@@ -145,7 +147,7 @@ impl Parser {
 
     fn peek(&mut self) -> Token {
         if self.read_position >= self.input.len() {
-            return Token::EOF;
+            return Token::Eof;
         } else {
             self.input[self.read_position].clone()
         }
