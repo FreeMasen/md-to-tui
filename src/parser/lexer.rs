@@ -5,7 +5,6 @@ use crate::error::Error;
 const INDENT_CHARS: &[u8; 65] =
     b"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890,\"\'";
 
-#[allow(dead_code)]
 #[derive(Debug, PartialEq, Eq, Clone, Default)]
 pub enum Token {
     Heading(usize),
@@ -42,38 +41,37 @@ pub enum Token {
 
 impl Display for Token {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let text: &str = "Token -> ";
+        write!(f, "Token -> ")?;
+        let simple: &str = match self {
+            Token::Heading(i) => return write!(f, "Heading: #{}", i),
+            Token::Indent(s) => return write!(f, "Indent: {} ", s),
+            Token::Illegal(s) => return write!(f, "Illegal: {} ", s),
 
-        let tok: String = match self {
-            Token::Heading(i) => format!("Heading: #{}", i),
-            Token::Indent(s) => format!("Indent: {} ", s),
-            Token::Illegal(s) => format!("Illegal: {} ", s),
+            Token::WhiteSpace => "WhiteSpace",
+            Token::Tab => "Tab",
+            Token::EOL => "EOL",
+            Token::EOF => "EOF",
 
-            Token::WhiteSpace => "WhiteSpace".into(),
-            Token::Tab => "Tab".into(),
-            Token::EOL => "EOL".into(),
-            Token::EOF => "EOF".into(),
+            Token::LeftSquare => "LeftSquare",
+            Token::RightSquare => "RightSquare",
+            Token::LeftParen => "LeftParen",
+            Token::RightParen => "RightParen",
+            Token::LeftAngle => "LeftAngle",
+            Token::RightAngle => "RightAngle",
 
-            Token::LeftSquare => "LeftSquare".into(),
-            Token::RightSquare => "RightSquare".into(),
-            Token::LeftParen => "LeftParen".into(),
-            Token::RightParen => "RightParen".into(),
-            Token::LeftAngle => "LeftAngle".into(),
-            Token::RightAngle => "RightAngle".into(),
-
-            Token::Dot => "Dot".into(),
-            Token::Dash => "Dash".into(),
-            Token::Equal => "Equal".into(),
-            Token::Plus => "Plus".into(),
-            Token::Asterisk => "Asterisk".into(),
-            Token::Undersocre => "Undersocre".into(),
-            Token::BackTick => "BackTick".into(),
-            Token::BackSlash => "BackSlash".into(),
-            Token::Colon => "Colon".into(),
-            Token::SemiColon => "SemiColon".into(),
-            Token::Slash => "Slash".into(),
+            Token::Dot => "Dot",
+            Token::Dash => "Dash",
+            Token::Equal => "Equal",
+            Token::Plus => "Plus",
+            Token::Asterisk => "Asterisk",
+            Token::Undersocre => "Undersocre",
+            Token::BackTick => "BackTick",
+            Token::BackSlash => "BackSlash",
+            Token::Colon => "Colon",
+            Token::SemiColon => "SemiColon",
+            Token::Slash => "Slash",
         };
-        write!(f, "{}", format!("{}{}", text, tok))
+        write!(f, "{simple}")
     }
 }
 
@@ -144,6 +142,7 @@ impl Lexer {
             b':' => Token::Colon,
             b';' => Token::SemiColon,
             b'/' => Token::Slash,
+            b'\t' => Token::Tab,
             _ => Token::Illegal(self.ch),
         };
 
