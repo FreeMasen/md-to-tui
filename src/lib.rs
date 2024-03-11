@@ -138,7 +138,7 @@ fn run_app<B: Backend>(
 }
 
 #[allow(dead_code)]
-fn ui<B: Backend>(f: &mut Frame<B>, _app: &App) {
+fn ui(f: &mut Frame, _app: &App) {
     let size = f.size();
 
     // Words made "loooong" to demonstrate line breaking.
